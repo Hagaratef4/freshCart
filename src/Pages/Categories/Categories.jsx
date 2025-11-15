@@ -1,53 +1,39 @@
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
-import React from 'react';
-import { Link, useParams } from 'react-router-dom';
-
-import ProductsCard from '../ProductsCard/ProductsCard';
+import CategoryCard from '../../Components/CategoryCard/CategoryCard';
 import Loader from '../../Components/loader';
-import ErrorPage from '../ErrorPage/ErrorPage';
+import React from 'react';
 
-function Category() {
+function Categories() {
 
-    let {id} = useParams()
-    console.log(id);
 
-    let {data , isFetching} = useQuery({
-        queryKey:['categoryProduct'],
+    let {data , isLoading } = useQuery({
+        queryKey:['categories'],
         queryFn:()=>{
-            return axios.get(`https://ecommerce.routemisr.com/api/v1/products?category[in]=${id}`)
+            return axios.get('https://ecommerce.routemisr.com/api/v1/categories')
         }
     })
     console.log(data);
 
     return (
         <>
-            <div className="container my-6">
-                    <div className="xl:mx-44">
-                        <div className="flex items-center mb-5">
-                        <Link
-                        to={'/categories'}
-                        className="cursor-pointer rounded-full p-1.5 mb-3.5 ease-in  mx-5 hover:bg-darkPrimary bg-primary text-center text-white">
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
-                            <path strokeLinecap="round" strokeLinejoin="round" d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18" />
-                            </svg>
-                        </Link>
-                        </div>
-
-                        {isFetching ? <Loader/>  : 
-                        data?.data?.results == 0 ? <ErrorPage/> :              
-                        <div className="grid gap-4 mx-15 md:mx-8 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-                                {data?.data?.data.map((item)=>(
-                                    <ProductsCard item={item}/>
-                                    ))}
-                        </div>
-                        }
-
+            <div className="bg-white flex items-center justify-center p-6 dark:bg-gray-500">
+                <div className="xl:max-w-6xl xl:w-auto w-full rounded-xl pb-6">
+                    <div className="border-y grow text-center border-gray-400">
+                        <h2 className='text-primary text-lg py-3 dark:text-white'>Shop by category</h2>
                     </div>
-
-            </div>   
+                    
+                    {isLoading? <Loader/>:
+                        <div className="grid grid-cols-2 gap-5 space-y-4 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 py-7">
+                            {data?.data?.data.map((item)=>(
+                                <CategoryCard item={item}/>
+                            ))}
+                        </div>
+                    }
+                </div>
+            </div>
         </>
     );
 }
 
-export default Category;
+export default Categories;
